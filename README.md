@@ -178,10 +178,10 @@ Lists relationships for a specific entity.
 ## Supported Perl Constructs
 
 - **Packages**: `package MyModule;`
-- **Subroutines**: `sub function_name { ... }`
-- **Variables**: `my $var`, `our @array`, `state %hash`
-- **Imports**: `use Module;`, `require Module;`
-- **Function calls**: Tracks calls between subroutines
+- **Imports**: `use Module;`, `require Module;` (creates file-level dependencies)
+- **File Extensions**: `.pl`, `.pm`, `.cgi` (excludes `.t` test files)
+- **Cross-File Resolution**: Maps package names to actual files
+- **File-Level Dependencies**: Tracks which files depend on which other files
 
 ## Development
 

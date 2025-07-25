@@ -16,9 +16,9 @@ export function detectLanguage(filePath: string): SupportedLanguage | null {
       return 'rust';
     case '.pl':        // Standard Perl extension
     case '.pm':        // Perl module
-    case '.t':         // Perl test file
     case '.cgi':       // CGI scripts often Perl
       return 'perl';
+    // Excluded: .t files (Perl test files) - per user request
     default:
       return null;
   }

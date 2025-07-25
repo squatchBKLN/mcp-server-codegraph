@@ -204,42 +204,38 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             };
           }
 
-          const relationships = graph.links
-            .filter((link: any) => link.source_id === entityNode.id || link.target_id === entityNode.id)
+          // For file-level relationships, find relationships where this file is involved
+          const fileRelationships = graph.links
+            .filter((link: any) => link.source_id === fileNode.id || link.target_id === fileNode.id)
             .map((link: any) => {
-              const sourceNode = graph.nodes.find((node: any) => node.id === link.source_id);
-              const targetNode = graph.nodes.find((node: any) => node.id === link.target_id);
+              const sourceFileNode = graph.nodes.find((node: any) => node.id === link.source_id);
+              const targetFileNode = graph.nodes.find((node: any) => node.id === link.target_id);
               
-              if (!sourceNode || !targetNode) {
-                console.warn(`Source or target node not found for link: ${JSON.stringify(link)}`);
+              if (!sourceFileNode || !targetFileNode) {
+                console.warn(`Source or target file not found for link: ${JSON.stringify(link)}`);
                 return null;
               }
-
-              const sourceFileNode = sourceNode.file_id ? 
-                graph.nodes.find((node: any) => node.id === sourceNode.file_id) : null;
-              const targetFileNode = targetNode.file_id ? 
-                graph.nodes.find((node: any) => node.id === targetNode.file_id) : null;
 
               return {
                 type: link.type,
                 source: {
-                  name: sourceNode.name,
-                  type: sourceNode.type,
-                  start: sourceNode.data?.start,
-                  end: sourceNode.data?.end,
-                  file: sourceFileNode?.name || filename,
+                  name: sourceFileNode.name,
+                  type: sourceFileNode.type,
+                  file: sourceFileNode.name,
                 },
                 target: {
-                  name: targetNode.name,
-                  type: targetNode.type,
-                  start: targetNode.data?.start,
-                  end: targetNode.data?.end,
-                  file: targetFileNode?.name || filename,
+                  name: targetFileNode.name,
+                  type: targetFileNode.type,
+                  file: targetFileNode.name,
                 },
                 data: link.data,
               };
             })
             .filter((rel: any) => rel !== null);
+
+          // Since we're looking for entity relationships but now only have file relationships,
+          // return file relationships that involve this entity's file
+          const relationships = fileRelationships;
 
           return {
             content: [{ type: "text", text: JSON.stringify(relationships, null, 2) }],

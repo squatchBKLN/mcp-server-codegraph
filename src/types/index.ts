@@ -43,17 +43,12 @@ export interface Entity {
 
 export interface Relationship {
   id: string;
-  sourceEntityId: string;
-  targetEntityId: string;
-  type: 'calls' | 'inherits' | 'implements' | 'imports' | 'uses' | 'method_call' | 'class_method_call';
-  filePath: string;
-  line: number;
+  sourceFileId: string;
+  targetFileId: string;
+  type: 'depends_on' | 'imports';
   metadata?: {
-    arguments?: string[];
-    methodName?: string;
-    className?: string;
-    objectName?: string;
-    targetFile?: string;
+    importedModules?: string[];
+    importType?: string;
     [key: string]: any;
   };
 }

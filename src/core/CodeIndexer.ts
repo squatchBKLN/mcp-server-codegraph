@@ -209,11 +209,11 @@ export class CodeIndexer {
       nodes.push(node);
     }
 
-    // Add relationship links
+    // Add relationship links (file-level only)
     for (const relationship of this.relationships) {
       const link: GraphLink = {
-        source_id: relationship.sourceEntityId,
-        target_id: relationship.targetEntityId,
+        source_id: relationship.sourceFileId,
+        target_id: relationship.targetFileId,
         type: relationship.type,
         data: relationship.metadata || {}
       };
