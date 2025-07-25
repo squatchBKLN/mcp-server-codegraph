@@ -9,14 +9,21 @@
     "mcp-server-filesystem": "dist/index.js"
   },
   "files": ["dist"],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch"
+  },
   "devDependencies": {
     "@types/bun": "latest",
+    "@types/node": "^20.0.0",
     "tsup": "^8.3.6"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.5.0"
+    "@modelcontextprotocol/sdk": "^1.5.0",
+    "zod": "^3.22.0",
+    "zod-to-json-schema": "^3.22.0"
   }
 }

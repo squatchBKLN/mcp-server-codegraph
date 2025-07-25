@@ -1,0 +1,192 @@
+{
+  "nodes": [
+    {
+      "id": "file:perl/sample.pl",
+      "name": "perl/sample.pl",
+      "type": "File",
+      "data": {
+        "children": [
+          "perl/sample.pl:MyModule::Utils",
+          "perl/sample.pl:Data::Dumper",
+          "perl/sample.pl:new",
+          "perl/sample.pl:process_data",
+          "perl/sample.pl:transform_item",
+          "perl/sample.pl:@EXPORT",
+          "perl/sample.pl:$class",
+          "perl/sample.pl:$self",
+          "perl/sample.pl:@results"
+        ]
+      }
+    },
+    {
+      "id": "perl/sample.pl:MyModule::Utils",
+      "name": "MyModule::Utils",
+      "type": "class",
+      "file_id": "file:perl/sample.pl",
+      "data": {
+        "start": {
+          "line": 3,
+          "column": 1
+        },
+        "end": {
+          "line": 3,
+          "column": 25
+        }
+      }
+    },
+    {
+      "id": "perl/sample.pl:Data::Dumper",
+      "name": "Data::Dumper",
+      "type": "import",
+      "file_id": "file:perl/sample.pl",
+      "data": {
+        "start": {
+          "line": 7,
+          "column": 1
+        },
+        "end": {
+          "line": 7,
+          "column": 17
+        }
+      }
+    },
+    {
+      "id": "perl/sample.pl:new",
+      "name": "new",
+      "type": "function",
+      "file_id": "file:perl/sample.pl",
+      "data": {
+        "start": {
+          "line": 11,
+          "column": 1
+        },
+        "end": {
+          "line": 18,
+          "column": 10
+        }
+      }
+    },
+    {
+      "id": "perl/sample.pl:process_data",
+      "name": "process_data",
+      "type": "function",
+      "file_id": "file:perl/sample.pl",
+      "data": {
+        "start": {
+          "line": 20,
+          "column": 1
+        },
+        "end": {
+          "line": 29,
+          "column": 19
+        }
+      }
+    },
+    {
+      "id": "perl/sample.pl:transform_item",
+      "name": "transform_item",
+      "type": "function",
+      "file_id": "file:perl/sample.pl",
+      "data": {
+        "start": {
+          "line": 31,
+          "column": 1
+        },
+        "end": {
+          "line": 34,
+          "column": 21
+        }
+      }
+    },
+    {
+      "id": "perl/sample.pl:@EXPORT",
+      "name": "@EXPORT",
+      "type": "variable",
+      "file_id": "file:perl/sample.pl",
+      "data": {
+        "start": {
+          "line": 9,
+          "column": 1
+        },
+        "end": {
+          "line": 9,
+          "column": 12
+        }
+      }
+    },
+    {
+      "id": "perl/sample.pl:$class",
+      "name": "$class",
+      "type": "variable",
+      "file_id": "file:perl/sample.pl",
+      "data": {
+        "start": {
+          "line": 12,
+          "column": 1
+        },
+        "end": {
+          "line": 12,
+          "column": 14
+        }
+      }
+    },
+    {
+      "id": "perl/sample.pl:$self",
+      "name": "$self",
+      "type": "variable",
+      "file_id": "file:perl/sample.pl",
+      "data": {
+        "start": {
+          "line": 13,
+          "column": 1
+        },
+        "end": {
+          "line": 13,
+          "column": 13
+        }
+      }
+    },
+    {
+      "id": "perl/sample.pl:@results",
+      "name": "@results",
+      "type": "variable",
+      "file_id": "file:perl/sample.pl",
+      "data": {
+        "start": {
+          "line": 22,
+          "column": 1
+        },
+        "end": {
+          "line": 22,
+          "column": 16
+        }
+      }
+    }
+  ],
+  "links": [
+    {
+      "source_id": "perl/sample.pl:process_data",
+      "target_id": "perl/sample.pl:my",
+      "type": "calls",
+      "data": {}
+    },
+    {
+      "source_id": "perl/sample.pl:process_data",
+      "target_id": "perl/sample.pl:item",
+      "type": "calls",
+      "data": {}
+    },
+    {
+      "source_id": "perl/sample.pl:process_data",
+      "target_id": "perl/sample.pl:transform_item",
+      "type": "calls",
+      "data": {}
+    },
+    {
+      "source_id": "perl/sample.pl:transform_item",
+      "target_id": "perl/sample.pl:my",
+      "type": "calls",
+      "data": {}
+    }
+  ]
+}
