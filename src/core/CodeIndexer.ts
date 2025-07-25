@@ -32,15 +32,68 @@ export class CodeIndexer {
   private entities: Map<string, Entity> = new Map();
   private relationships: Relationship[] = [];
   private fileNodes: Map<string, GraphNode> = new Map();
+  private allFiles: Map<string, string> = new Map(); // relativePath -> fullPath
+  private packageToFile: Map<string, string> = new Map(); // packageName -> relativePath
 
   async indexDirectory(directoryPath: string): Promise<IndexResult> {
     this.entities.clear();
     this.relationships = [];
     this.fileNodes.clear();
+    this.allFiles.clear();
+    this.packageToFile.clear();
 
+    // First pass: collect all files and build package-to-file mapping
+    await this.collectFiles(directoryPath, directoryPath);
+    
+    // Second pass: analyze files with cross-file context
     await this.processDirectory(directoryPath, directoryPath);
     
     return this.buildGraph();
+  }
+
+  private async collectFiles(dirPath: string, rootPath: string): Promise<void> {
+    const entries = readdirSync(dirPath);
+
+    for (const entry of entries) {
+      const fullPath = join(dirPath, entry);
+      const stat = statSync(fullPath);
+
+      if (stat.isDirectory()) {
+        if (!this.shouldSkipDirectory(entry)) {
+          await this.collectFiles(fullPath, rootPath);
+        }
+      } else if (stat.isFile()) {
+        const language = detectLanguage(fullPath);
+        if (language) {
+          const relativePath = relative(rootPath, fullPath);
+          this.allFiles.set(relativePath, fullPath);
+          
+          // Build package-to-file mapping for Perl files
+          if (language === 'perl') {
+            await this.mapPackageToFile(fullPath, relativePath);
+          }
+        }
+      }
+    }
+  }
+
+  private async mapPackageToFile(filePath: string, relativePath: string): Promise<void> {
+    try {
+      const content = readFileSync(filePath, 'utf-8');
+      const lines = content.split('\n');
+      const packageRegex = /^\s*package\s+([A-Za-z_][A-Za-z0-9_:]*)\s*;/;
+      
+      for (const line of lines) {
+        const match = line.match(packageRegex);
+        if (match) {
+          const packageName = match[1];
+          this.packageToFile.set(packageName, relativePath);
+          break; // Usually only one package per file
+        }
+      }
+    } catch (error) {
+      console.error(`Error reading file for package mapping ${filePath}:`, error);
+    }
   }
 
   private async processDirectory(dirPath: string, rootPath: string): Promise<void> {
@@ -100,11 +153,18 @@ export class CodeIndexer {
       };
       this.fileNodes.set(relativePath, fileNode);
 
-      // Analyze the file
+      // Analyze the file with cross-file context
       const analyzer = AnalyzerFactory.createAnalyzer(language);
       analyzer.initializeParser();
       
-      const result: AnalysisResult = analyzer.analyzeFile(relativePath, content);
+      // Pass cross-file context to Perl analyzer
+      const crossFileContext = {
+        packageToFile: this.packageToFile,
+        allFiles: this.allFiles,
+        entities: this.entities
+      };
+      
+      const result: AnalysisResult = analyzer.analyzeFile(relativePath, content, crossFileContext);
       
       // Store entities and relationships
       for (const entity of result.entities) {

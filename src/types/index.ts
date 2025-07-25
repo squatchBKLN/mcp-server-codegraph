@@ -45,11 +45,15 @@ export interface Relationship {
   id: string;
   sourceEntityId: string;
   targetEntityId: string;
-  type: 'calls' | 'inherits' | 'implements' | 'imports' | 'uses';
+  type: 'calls' | 'inherits' | 'implements' | 'imports' | 'uses' | 'method_call' | 'class_method_call';
   filePath: string;
   line: number;
   metadata?: {
     arguments?: string[];
+    methodName?: string;
+    className?: string;
+    objectName?: string;
+    targetFile?: string;
     [key: string]: any;
   };
 }

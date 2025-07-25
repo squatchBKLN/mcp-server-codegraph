@@ -10,7 +10,7 @@ export abstract class AbstractAnalyzer {
 
   public abstract initializeParser(): void;
 
-  abstract analyzeFile(filePath: string, content: string): AnalysisResult;
+  abstract analyzeFile(filePath: string, content: string, crossFileContext?: any): AnalysisResult;
 
   protected generateId(filePath: string, name: string): string {
     return `${filePath}:${name}`;
