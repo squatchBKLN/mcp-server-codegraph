@@ -1,0 +1,16 @@
+graph TD
+    file_perl_Utils_pm["Utils.pm"]:::perlModule
+    file_perl_main_pl["main.pl"]:::perlScript
+    file_perl_sample_pl["sample.pl"]:::perlScript
+    file_perl_main_pl -->|"Utils"| file_perl_Utils_pm
+    file_perl_main_pl -->|"MyModule::Utils"| file_perl_sample_pl
+
+    classDef perlScript fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef perlModule fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef cgiScript fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef defaultFile fill:#f5f5f5,stroke:#616161,stroke-width:1px
+    
+    classDef classEntity fill:#e8f5e8,stroke:#2e7d32,stroke-width:1px
+    classDef importEntity fill:#fff8e1,stroke:#f57c00,stroke-width:1px
+    classDef functionEntity fill:#e3f2fd,stroke:#1565c0,stroke-width:1px
+    classDef defaultEntity fill:#fafafa,stroke:#757575,stroke-width:1px

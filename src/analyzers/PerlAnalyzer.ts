@@ -67,6 +67,11 @@ export class PerlAnalyzer extends AbstractAnalyzer {
           return;
         }
         
+        // Skip CPAN modules (external dependencies)
+        if (this.isCPANModule(moduleName)) {
+          return;
+        }
+        
         const entity: Entity = {
           id: this.generateId(filePath, moduleName),
           name: moduleName,
@@ -117,6 +122,102 @@ export class PerlAnalyzer extends AbstractAnalyzer {
         }
       }
     });
+  }
+
+  // CPAN module detection
+  private isCPANModule(moduleName: string): boolean {
+    // Common CPAN modules that should be ignored
+    const commonCPANModules = [
+      // Core modules that are commonly used
+      'Data::Dumper', 'JSON', 'JSON::PP', 'JSON::XS',
+      'DBI', 'DBD::mysql', 'DBD::Pg', 'DBD::SQLite',
+      'LWP::UserAgent', 'HTTP::Request', 'HTTP::Response',
+      'CGI', 'CGI::Session', 'CGI::Cookie',
+      'Template', 'Template::Toolkit',
+      'Moose', 'Mouse', 'Moo',
+      'DateTime', 'DateTime::Format::Strptime',
+      'File::Slurp', 'File::Find', 'File::Basename', 'File::Path', 'File::Spec',
+      'List::Util', 'List::MoreUtils',
+      'Scalar::Util',
+      'Digest::MD5', 'Digest::SHA',
+      'MIME::Base64',
+      'Encode',
+      'Getopt::Long', 'Getopt::Std',
+      'Pod::Usage',
+      'Test::More', 'Test::Simple', 'Test::Exception',
+      'YAML', 'YAML::Tiny', 'YAML::XS',
+      'XML::Simple', 'XML::LibXML',
+      'Carp', 'Carp::Always',
+      'FindBin',
+      'lib',
+      'constant',
+      'base', 'parent',
+      'Exporter',
+      'AutoLoader', 'SelfLoader',
+      'POSIX',
+      'IO::File', 'IO::Handle', 'IO::Socket',
+      'Socket',
+      'Fcntl',
+      'SDBM_File', 'NDBM_File', 'ODBM_File', 'GDBM_File', 'DB_File',
+      'Tie::Hash', 'Tie::Array',
+      'Config',
+      'English',
+      'Symbol',
+      'SelectSaver',
+      'FileHandle',
+      'DirHandle',
+      'Benchmark',
+      'Dumpvalue',
+      'Env',
+      'Errno',
+      'Fatal',
+      'I18N::Collate',
+      'IPC::Open2', 'IPC::Open3',
+      'Net::Ping', 'Net::FTP', 'Net::SMTP',
+      'Safe',
+      'Search::Dict',
+      'Sys::Hostname', 'Sys::Syslog',
+      'Term::ANSIColor', 'Term::Cap', 'Term::Complete', 'Term::ReadLine',
+      'Text::Abbrev', 'Text::ParseWords', 'Text::Soundex', 'Text::Tabs', 'Text::Wrap',
+      'Thread', 'Thread::Queue', 'Thread::Semaphore',
+      'Time::Local', 'Time::gmtime', 'Time::localtime',
+      'User::grent', 'User::pwent'
+    ];
+    
+    // Check if it's in the common CPAN modules list
+    if (commonCPANModules.includes(moduleName)) {
+      return true;
+    }
+    
+    // Heuristic: If it contains multiple :: separators and starts with common CPAN namespaces
+    const cpanNamespaces = [
+      'Acme::', 'Algorithm::', 'App::', 'Archive::', 'Attribute::', 'Audio::',
+      'B::', 'Benchmark::', 'Bio::', 'Business::', 'Bundle::', 'Cache::', 'Catalyst::',
+      'Class::', 'Compress::', 'Config::', 'Convert::', 'CPAN::', 'Crypt::', 'DBIx::',
+      'Data::', 'Date::', 'DateTime::', 'Devel::', 'Device::', 'Digest::', 'Email::',
+      'Encode::', 'Error::', 'ExtUtils::', 'File::', 'Finance::', 'Font::', 'Games::',
+      'GD::', 'Getopt::', 'Graph::', 'HTML::', 'HTTP::', 'Image::', 'IO::', 'IPC::',
+      'JSON::', 'LWP::', 'Lingua::', 'List::', 'Log::', 'MIME::', 'Mail::', 'Math::',
+      'Module::', 'Mojo::', 'Net::', 'Number::', 'Object::', 'PDF::', 'POE::', 'Parse::',
+      'Path::', 'Perl::', 'Pod::', 'Proc::', 'Regexp::', 'SQL::', 'Scalar::', 'Set::',
+      'Statistics::', 'String::', 'Sys::', 'Task::', 'Template::', 'Term::', 'Test::',
+      'Text::', 'Thread::', 'Tie::', 'Time::', 'Tree::', 'URI::', 'Unicode::', 'WWW::',
+      'XML::', 'YAML::'
+    ];
+    
+    for (const namespace of cpanNamespaces) {
+      if (moduleName.startsWith(namespace)) {
+        return true;
+      }
+    }
+    
+    // If module name has 3+ parts (e.g., Some::Deep::Module), likely CPAN
+    const parts = moduleName.split('::');
+    if (parts.length >= 3) {
+      return true;
+    }
+    
+    return false;
   }
 
   // Cross-file resolution methods

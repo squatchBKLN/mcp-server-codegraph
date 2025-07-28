@@ -58,11 +58,12 @@ node dist/index.js ~/my-perl-project
 
 ### Available Tools
 
-The server provides three main tools via the MCP protocol:
+The server provides four main tools via the MCP protocol:
 
 1. **`index`** - Indexes the entire codebase
 2. **`list_file_entities`** - Lists all entities in a specific file
 3. **`list_entity_relationships`** - Shows relationships for a specific entity
+4. **`generate_mermaid`** - Generates Mermaid diagrams from the indexed codebase
 
 ### Testing the Server
 
@@ -143,10 +144,21 @@ The server follows the standard MCP protocol and can be integrated with any MCP-
 
 ### Tool: `index`
 
-Indexes the entire codebase and creates a graph of entities and relationships.
+Indexes the entire codebase and creates a graph of entities and relationships. **Automatically generates multiple visualization formats.**
 
 **Input**: None
-**Output**: Success message with statistics
+**Output**: Success message with statistics and list of generated files
+
+**Generated Files**:
+- `index.json` - Raw graph data (nodes and relationships)
+- `codegraph.dot` - GraphViz DOT format for professional diagrams
+- `codegraph-d3.json` - D3.js format for interactive web visualizations
+- `codegraph-cytoscape.json` - Cytoscape format for network analysis
+
+**Visualization Tools**:
+- **GraphViz DOT**: Use with Graphviz, VS Code GraphViz extensions, yEd, online DOT viewers
+- **D3.js JSON**: Perfect for Observable notebooks, custom web apps, interactive dashboards
+- **Cytoscape JSON**: Compatible with Cytoscape desktop app, Gephi, network analysis tools
 
 ### Tool: `list_file_entities`
 
@@ -175,6 +187,39 @@ Lists relationships for a specific entity.
 
 **Output**: Array of relationships showing source, target, and relationship type
 
+### Tool: `generate_mermaid`
+
+Generates Mermaid diagrams from the indexed codebase.
+
+**Input**:
+```json
+{
+  "type": "dependency" | "entity"
+}
+```
+
+**Types**:
+- **`dependency`**: Creates a clean file-level dependency diagram showing which files import which other files
+- **`entity`**: Creates a detailed diagram with subgraphs showing entities within each file
+
+**Output**: Mermaid diagram code and saves `.mmd` files to the analyzed directory
+
+**Example Dependency Diagram**:
+```mermaid
+graph TD
+    file_perl_Utils_pm["Utils.pm"]:::perlModule
+    file_perl_main_pl["main.pl"]:::perlScript
+    file_perl_sample_pl["sample.pl"]:::perlScript
+    file_perl_main_pl -->|"Utils"| file_perl_Utils_pm
+    file_perl_main_pl -->|"MyModule::Utils"| file_perl_sample_pl
+```
+
+**Features**:
+- **Color-coded nodes**: Different colors for `.pl` (scripts), `.pm` (modules), `.cgi` (CGI scripts)
+- **Labeled relationships**: Shows which modules are imported
+- **Clean file names**: Displays just the filename for readability
+- **Automatic styling**: Includes CSS classes for professional appearance
+
 ## Supported Perl Constructs
 
 - **Packages**: `package MyModule;`
@@ -182,6 +227,23 @@ Lists relationships for a specific entity.
 - **File Extensions**: `.pl`, `.pm`, `.cgi` (excludes `.t` test files)
 - **Cross-File Resolution**: Maps package names to actual files
 - **File-Level Dependencies**: Tracks which files depend on which other files
+- **CPAN Module Filtering**: Automatically ignores external CPAN modules to focus on project code
+
+### CPAN Module Filtering
+
+The analyzer automatically filters out CPAN modules to focus on your project's internal dependencies:
+
+**Filtered Out**:
+- Common CPAN modules (Data::Dumper, JSON::PP, DBI, LWP::UserAgent, etc.)
+- Perl pragmas (strict, warnings, utf8, feature)
+- Core modules (File::*, List::*, etc.)
+- Modules with common CPAN namespaces (DateTime::, Template::, etc.)
+- Deep module hierarchies (3+ levels like Some::Deep::Module)
+
+**Included**:
+- Project-specific modules
+- Local packages and libraries
+- Custom modules in your codebase
 
 ## Development
 

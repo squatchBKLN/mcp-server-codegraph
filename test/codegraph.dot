@@ -1,0 +1,25 @@
+digraph CodeGraph {
+  // Graph settings
+  rankdir=TB;
+  node [shape=box, style=filled, fontname="Arial", fontsize=10];
+  edge [fontname="Arial", fontsize=8];
+
+  // File nodes
+  file_perl_Utils_pm [label="Utils.pm", fillcolor="#f3e5f5", color="#4a148c"];
+  file_perl_main_pl [label="main.pl", fillcolor="#e1f5fe", color="#01579b"];
+  file_perl_sample_pl [label="sample.pl", fillcolor="#e1f5fe", color="#01579b"];
+
+  // Dependencies
+  file_perl_main_pl -> file_perl_Utils_pm [label="Utils", color="#2196f3", style=solid];
+  file_perl_main_pl -> file_perl_sample_pl [label="MyModule::Utils", color="#2196f3", style=solid];
+
+  // Legend
+  subgraph cluster_legend {
+    label="File Types";
+    style=filled;
+    fillcolor=lightgray;
+    legend_pl [label=".pl (Script)", fillcolor="#e1f5fe", color="#01579b"];
+    legend_pm [label=".pm (Module)", fillcolor="#f3e5f5", color="#4a148c"];
+    legend_cgi [label=".cgi (CGI)", fillcolor="#fff3e0", color="#e65100"];
+  }
+}

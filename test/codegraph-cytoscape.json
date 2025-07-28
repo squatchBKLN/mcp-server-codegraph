@@ -1,0 +1,235 @@
+{
+  "elements": {
+    "nodes": [
+      {
+        "data": {
+          "id": "file:perl/Utils.pm",
+          "name": "perl/Utils.pm",
+          "type": "File",
+          "group": "file_pm",
+          "metadata": {
+            "children": [
+              "perl/Utils.pm:Utils"
+            ]
+          }
+        },
+        "classes": "file file-pm"
+      },
+      {
+        "data": {
+          "id": "file:perl/main.pl",
+          "name": "perl/main.pl",
+          "type": "File",
+          "group": "file_pl",
+          "metadata": {
+            "children": [
+              "perl/main.pl:Utils",
+              "perl/main.pl:MyModule::Utils"
+            ]
+          }
+        },
+        "classes": "file file-pl"
+      },
+      {
+        "data": {
+          "id": "file:perl/sample.pl",
+          "name": "perl/sample.pl",
+          "type": "File",
+          "group": "file_pl",
+          "metadata": {
+            "children": [
+              "perl/sample.pl:MyModule::Utils"
+            ]
+          }
+        },
+        "classes": "file file-pl"
+      },
+      {
+        "data": {
+          "id": "perl/Utils.pm:Utils",
+          "name": "Utils",
+          "type": "class",
+          "group": "class",
+          "metadata": {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 15
+            }
+          }
+        },
+        "classes": "entity entity-class"
+      },
+      {
+        "data": {
+          "id": "perl/main.pl:Utils",
+          "name": "Utils",
+          "type": "import",
+          "group": "import",
+          "metadata": {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 5,
+              "column": 10
+            }
+          }
+        },
+        "classes": "entity entity-import"
+      },
+      {
+        "data": {
+          "id": "perl/main.pl:MyModule::Utils",
+          "name": "MyModule::Utils",
+          "type": "import",
+          "group": "import",
+          "metadata": {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 20
+            }
+          }
+        },
+        "classes": "entity entity-import"
+      },
+      {
+        "data": {
+          "id": "perl/sample.pl:MyModule::Utils",
+          "name": "MyModule::Utils",
+          "type": "class",
+          "group": "class",
+          "metadata": {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 25
+            }
+          }
+        },
+        "classes": "entity entity-class"
+      }
+    ],
+    "edges": [
+      {
+        "data": {
+          "id": "edge_0",
+          "source": "file:perl/main.pl",
+          "target": "file:perl/Utils.pm",
+          "type": "imports",
+          "label": "Utils",
+          "metadata": {
+            "importedModules": [
+              "Utils"
+            ],
+            "importType": "use"
+          }
+        },
+        "classes": "edge edge-imports"
+      },
+      {
+        "data": {
+          "id": "edge_1",
+          "source": "file:perl/main.pl",
+          "target": "file:perl/sample.pl",
+          "type": "imports",
+          "label": "MyModule::Utils",
+          "metadata": {
+            "importedModules": [
+              "MyModule::Utils"
+            ],
+            "importType": "use"
+          }
+        },
+        "classes": "edge edge-imports"
+      }
+    ]
+  },
+  "style": [
+    {
+      "selector": "node",
+      "style": {
+        "background-color": "#666",
+        "label": "data(name)",
+        "font-size": "10px",
+        "text-valign": "center",
+        "text-halign": "center",
+        "width": "30px",
+        "height": "30px"
+      }
+    },
+    {
+      "selector": "node.file-pl",
+      "style": {
+        "background-color": "#01579b",
+        "shape": "rectangle"
+      }
+    },
+    {
+      "selector": "node.file-pm",
+      "style": {
+        "background-color": "#4a148c",
+        "shape": "rectangle"
+      }
+    },
+    {
+      "selector": "node.file-cgi",
+      "style": {
+        "background-color": "#e65100",
+        "shape": "rectangle"
+      }
+    },
+    {
+      "selector": "edge",
+      "style": {
+        "width": 2,
+        "line-color": "#ccc",
+        "target-arrow-color": "#ccc",
+        "target-arrow-shape": "triangle",
+        "curve-style": "bezier",
+        "label": "data(label)",
+        "font-size": "8px"
+      }
+    },
+    {
+      "selector": "edge.edge-imports",
+      "style": {
+        "line-color": "#2196f3",
+        "target-arrow-color": "#2196f3"
+      }
+    }
+  ],
+  "layout": {
+    "name": "cose",
+    "idealEdgeLength": 100,
+    "nodeOverlap": 20,
+    "refresh": 20,
+    "fit": true,
+    "padding": 30,
+    "randomize": false,
+    "componentSpacing": 100,
+    "nodeRepulsion": 400000,
+    "edgeElasticity": 100,
+    "nestingFactor": 5,
+    "gravity": 80,
+    "numIter": 1000,
+    "initialTemp": 200,
+    "coolingFactor": 0.95,
+    "minTemp": 1
+  },
+  "metadata": {
+    "generated": "2025-07-25T20:17:22.139Z",
+    "description": "Perl codebase dependency graph in Cytoscape.js format"
+  }
+}

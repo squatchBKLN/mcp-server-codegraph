@@ -5,6 +5,9 @@ package MyModule::Utils;
 use strict;
 use warnings;
 use Data::Dumper qw(Dumper);
+use JSON::PP;
+use DBI;
+use LWP::UserAgent;
 
 our @EXPORT = qw(process_data);
 

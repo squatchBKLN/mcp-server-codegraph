@@ -9,6 +9,8 @@ import { CallToolRequestSchema, ListToolsRequestSchema, ToolSchema } from "@mode
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { CodeIndexer } from './core/CodeIndexer.js';
+import { MermaidGenerator } from './utils/mermaidGenerator.js';
+import { VisualizationExporter } from './utils/visualizationExporter.js';
 
 // Command line argument parsing
 const args = process.argv.slice(2);
@@ -47,6 +49,10 @@ const ListEntityRelationshipsArgsSchema = z.object({
   name: z.string().describe("name of entity"),
 });
 
+const GenerateMermaidArgsSchema = z.object({
+  type: z.enum(['dependency', 'entity']).describe("Type of diagram: 'dependency' for file dependencies, 'entity' for detailed entity view"),
+});
+
 const ToolInputSchema = ToolSchema.shape.inputSchema;
 type ToolInput = z.infer<typeof ToolInputSchema>;
 
@@ -75,6 +81,12 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           "Lists the relationships (Calls, Inheritance, Implementations) of a specify entity. Returns details about the related entities (source and target) and the type of relationship. Use this to understand how an entity interacts with other parts of the code.",
         inputSchema: zodToJsonSchema(ListEntityRelationshipsArgsSchema) as ToolInput,
       },
+      {
+        name: "generate_mermaid",
+        description:
+          "Generates a Mermaid diagram from the indexed codebase. Use 'dependency' type for file-level dependency diagrams, or 'entity' type for detailed entity diagrams with subgraphs.",
+        inputSchema: zodToJsonSchema(GenerateMermaidArgsSchema) as ToolInput,
+      },
     ],
   };
 });
@@ -93,10 +105,38 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           const indexPath = join(directory, "index.json");
           writeFileSync(indexPath, JSON.stringify(result, null, 2));
           
+          // Generate visualization files automatically
+          const generatedFiles: string[] = [indexPath];
+          
+          try {
+            // Generate GraphViz DOT format
+            const dotCode = VisualizationExporter.generateDotFormat(result);
+            const dotPath = join(directory, "codegraph.dot");
+            writeFileSync(dotPath, dotCode);
+            generatedFiles.push(dotPath);
+            
+            // Generate D3.js JSON format
+            const d3Json = VisualizationExporter.generateD3JsonFormat(result);
+            const d3Path = join(directory, "codegraph-d3.json");
+            writeFileSync(d3Path, d3Json);
+            generatedFiles.push(d3Path);
+            
+            // Generate Cytoscape JSON format
+            const cytoscapeJson = VisualizationExporter.generateCytoscapeJsonFormat(result);
+            const cytoscapePath = join(directory, "codegraph-cytoscape.json");
+            writeFileSync(cytoscapePath, cytoscapeJson);
+            generatedFiles.push(cytoscapePath);
+            
+          } catch (vizError) {
+            console.warn("Warning: Could not generate some visualization files:", vizError);
+          }
+          
+          const fileList = generatedFiles.map(f => `  - ${f}`).join('\n');
+          
           return {
             content: [{ 
               type: "text", 
-              text: `Successfully indexed ${result.nodes.length} nodes and ${result.links.length} relationships. Index saved to ${indexPath}` 
+              text: `Successfully indexed ${result.nodes.length} nodes and ${result.links.length} relationships.\n\nGenerated files:\n${fileList}\n\nVisualization formats:\n  - codegraph.dot (GraphViz format - use with Graphviz tools)\n  - codegraph-d3.json (D3.js format - for web visualizations)\n  - codegraph-cytoscape.json (Cytoscape format - for network analysis)` 
             }],
           };
         } catch (error) {
@@ -243,6 +283,49 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         } catch (error) {
           return {
             content: [{ type: "text", text: `Error reading index file: ${error}` }],
+            isError: true,
+          };
+        }
+      }
+
+      case "generate_mermaid": {
+        const parsedArgs = GenerateMermaidArgsSchema.safeParse(args);
+        if (!parsedArgs.success) {
+          throw new Error(`Invalid arguments for generate_mermaid: ${parsedArgs.error}`);
+        }
+        
+        const diagramType = parsedArgs.data.type;
+        const indexPath = join(directory, "index.json");
+        
+        try {
+          const indexResult = JSON.parse(readFileSync(indexPath, "utf-8"));
+          
+          let mermaidCode: string;
+          let diagramPath: string;
+          
+          if (diagramType === 'dependency') {
+            mermaidCode = MermaidGenerator.generateDependencyDiagram(indexResult);
+            diagramPath = join(directory, "dependency-diagram.mmd");
+          } else {
+            mermaidCode = MermaidGenerator.generateEntityDiagram(indexResult);
+            diagramPath = join(directory, "entity-diagram.mmd");
+          }
+          
+          // Write the Mermaid diagram to file
+          writeFileSync(diagramPath, mermaidCode);
+          
+          return {
+            content: [
+              { 
+                type: "text", 
+                text: `Generated ${diagramType} Mermaid diagram saved to ${diagramPath}\n\n${mermaidCode}` 
+              }
+            ],
+          };
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          return {
+            content: [{ type: "text", text: `Error generating Mermaid diagram: ${errorMessage}` }],
             isError: true,
           };
         }

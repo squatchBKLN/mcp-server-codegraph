@@ -4,7 +4,10 @@
       "id": "file:perl/Utils.pm",
       "name": "perl/Utils.pm",
       "type": "File",
-      "data": {
+      "group": 2,
+      "size": 20,
+      "color": "#4a148c",
+      "metadata": {
         "children": [
           "perl/Utils.pm:Utils"
         ]
@@ -14,7 +17,10 @@
       "id": "file:perl/main.pl",
       "name": "perl/main.pl",
       "type": "File",
-      "data": {
+      "group": 1,
+      "size": 20,
+      "color": "#01579b",
+      "metadata": {
         "children": [
           "perl/main.pl:Utils",
           "perl/main.pl:MyModule::Utils"
@@ -25,7 +31,10 @@
       "id": "file:perl/sample.pl",
       "name": "perl/sample.pl",
       "type": "File",
-      "data": {
+      "group": 1,
+      "size": 20,
+      "color": "#01579b",
+      "metadata": {
         "children": [
           "perl/sample.pl:MyModule::Utils"
         ]
@@ -35,8 +44,10 @@
       "id": "perl/Utils.pm:Utils",
       "name": "Utils",
       "type": "class",
-      "file_id": "file:perl/Utils.pm",
-      "data": {
+      "group": 4,
+      "size": 10,
+      "color": "#757575",
+      "metadata": {
         "start": {
           "line": 1,
           "column": 1
@@ -51,8 +62,10 @@
       "id": "perl/main.pl:Utils",
       "name": "Utils",
       "type": "import",
-      "file_id": "file:perl/main.pl",
-      "data": {
+      "group": 4,
+      "size": 10,
+      "color": "#757575",
+      "metadata": {
         "start": {
           "line": 5,
           "column": 1
@@ -67,8 +80,10 @@
       "id": "perl/main.pl:MyModule::Utils",
       "name": "MyModule::Utils",
       "type": "import",
-      "file_id": "file:perl/main.pl",
-      "data": {
+      "group": 4,
+      "size": 10,
+      "color": "#757575",
+      "metadata": {
         "start": {
           "line": 6,
           "column": 1
@@ -83,8 +98,10 @@
       "id": "perl/sample.pl:MyModule::Utils",
       "name": "MyModule::Utils",
       "type": "class",
-      "file_id": "file:perl/sample.pl",
-      "data": {
+      "group": 4,
+      "size": 10,
+      "color": "#757575",
+      "metadata": {
         "start": {
           "line": 3,
           "column": 1
@@ -98,10 +115,12 @@
   ],
   "links": [
     {
-      "source_id": "file:perl/main.pl",
-      "target_id": "file:perl/Utils.pm",
+      "source": "file:perl/main.pl",
+      "target": "file:perl/Utils.pm",
       "type": "imports",
-      "data": {
+      "value": 1,
+      "label": "Utils",
+      "metadata": {
         "importedModules": [
           "Utils"
         ],
@@ -109,15 +128,24 @@
       }
     },
     {
-      "source_id": "file:perl/main.pl",
-      "target_id": "file:perl/sample.pl",
+      "source": "file:perl/main.pl",
+      "target": "file:perl/sample.pl",
       "type": "imports",
-      "data": {
+      "value": 1,
+      "label": "MyModule::Utils",
+      "metadata": {
         "importedModules": [
           "MyModule::Utils"
         ],
         "importType": "use"
       }
     }
-  ]
+  ],
+  "metadata": {
+    "generated": "2025-07-25T20:17:22.138Z",
+    "nodeCount": 7,
+    "linkCount": 2,
+    "fileCount": 3,
+    "description": "Perl codebase dependency graph in D3.js format"
+  }
 }
